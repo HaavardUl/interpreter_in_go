@@ -58,7 +58,7 @@ type Identifier struct {
 
 func (i *Identifier) expressionNode()      {}
 func (i *Identifier) TokenLiteral() string { return i.Token.Literal }
-func (i *Identifier) String() string { return i.Value }
+func (i *Identifier) String() string       { return i.Value }
 
 type ReturnStatement struct {
 	Token       token.Token // the 'return' token
@@ -93,31 +93,50 @@ func (ls *LetStatement) String() string {
 }
 
 func (rs *ReturnStatement) String() string {
-    var out bytes.Buffer
+	var out bytes.Buffer
 
-    out.WriteString(rs.TokenLiteral() + " ")
+	out.WriteString(rs.TokenLiteral() + " ")
 
-    if rs.ReturnValue != nil {
-        out.WriteString(rs.ReturnValue.String())
-    }
+	if rs.ReturnValue != nil {
+		out.WriteString(rs.ReturnValue.String())
+	}
 
-    out.WriteString(";")
+	out.WriteString(";")
 
-    return out.String()
+	return out.String()
 }
 
 func (es *ExpressionStatement) String() string {
-    if es.Expression != nil {
-        return es.Expression.String()
-    }
-    return ""
+	if es.Expression != nil {
+		return es.Expression.String()
+	}
+	return ""
 }
 
 type IntegerLiteral struct {
-    Token token.Token
-    Value int64
+	Token token.Token
+	Value int64
 }
 
 func (il *IntegerLiteral) expressionNode()      {}
 func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Literal }
 func (il *IntegerLiteral) String() string       { return il.Token.Literal }
+
+type PrefixExpression struct {
+	Token    token.Token // The prefix token, e.g. !
+	Operator string
+	Right    Expression
+}
+
+func (pe *PrefixExpression) expressionNode()      {}
+func (pe *PrefixExpression) TokenLiteral() string { return pe.Token.Literal }
+func (pe *PrefixExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("(")
+	out.WriteString(pe.Operator)
+	out.WriteString(pe.Right.String())
+	out.WriteString(")")
+
+	return out.String()
+}
